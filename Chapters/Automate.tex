@@ -1,0 +1,1176 @@
+\chapter{Limbaje regulate}
+\label{ch:automate}
+
+\section{Automate finite}
+
+Automatele cu stări finite, sau pe scurt automatele finite, reprezintă un model matematic care permite descrierea proceselor de calcul. Un automat finit este gândit ca şi o maşină abstractă, care, la un moment dat, se poate afla într-o singură stare, dintr-o mulţime finită de stări date. Starea în care se află automatul la un moment dat se numeşte \textit{stare curentă}. Starea în care se află automatul înainte de începerea procesului de calcul se numeşte \textit{stare iniţială}. Automatul poate să treacă dintr-o stare în alta în funcţie de anumite intrări. Schimbarea stării curente a automatului (trecerea din starea curentă într-o altă stare, care devine noua stare curentă) se numeşte \textit{tranziţie}. Dacă pentru o stare curentă şi pentru o intrare dată automatul poate să facă o singură tranziţie (există o singură stare în care poate să treacă, în baza intrării date), atunci el este un automat finit determinist. Dacă însă pentru o stare curentă şi o intrare dată un automat poate efectua mai multe tranziţii (există mai multe stări în care poate să treacă, în baza intrării date), atunci el este un automat finit nedeterminist.
+
+În teoria limbajelor formale, automatele finite sunt utilizate pentru a defini sau pentru a recunoaşte limbaje regulate. Cu alte cuvinte, expresivitatea unui anumit finit este aceeaşi cu cea a unei gramatici regulate. Pentru un astfel de automat, intrarea pe baza căreia se realizează tranziţiile este dată de către următorul simbol neanalizat din şirul de la intrare. Mulţimea şirurilor de simboluri pe care le recunoaşte un automat finit dat, se numeşte limbajul definit de către automat. Aşa cum am văzut în capitolul precedent, automatele finite sunt utilizate pentru a verifica dacă o propoziţie dată aparţine sau nu unui anumit limbaj regulat, adică dacă este o propoziţie corectă din punctul de vedere al limbajului regulat avut în vedere.
+
+\subsection{Automate finite deterministe}
+
+În continuare vom da definiţia formală a unui automat finit determinist, din punct de vedere al teoriei limbajelor formale.
+
+\begin{definitie}
+Un \textbf{automat finit determinist} este un cvintuplu $AFD=(\Sigma, Q, F, q_{0}, f)$, în care:
+\begin{itemize}
+\item
+$\Sigma$ este o mulţime finită de simboluri şi se numeşte alfabetul limbajului de intrare al automatului;
+\item
+$Q$ este mulţimea finită de stări ale automatului;
+\item
+$F$ este mulţimea stărilor finale ale automatului, $F \subseteq Q$;
+\item
+$q_{0}$ este starea iniţială a automatului, $q_{0} \in Q$;
+\item
+$f$ este funcţia de tranziţie, $f:Q \times \Sigma \rightarrow Q$.
+\end{itemize}
+\end{definitie}
+
+Un automat finit poate fi reprezentat în două moduri: prin graful de tranziţie, sau prin tabela de tranziţie. Pentru a descrie cele două modalităţi de reprezentare, vom porni de la exemplul următor.
+
+Exemplu:
+
+Fie automatul finit determinist $AFD=(\Sigma, Q, F, q_{0}, f)$, unde:
+
+\begin{itemize}
+\item
+$\Sigma = \{ 0, 1 \}$,
+\item
+$Q = \{ q_{0}, q_{1}, q_{2} \}$,
+\item
+$F=\{ q_{0}, q_{2} \}$
+\item
+starea iniţială este $q_{0}$,
+\item
+iar funcţia de tranziţie $f$ se deduce din graful de tranziţie, sau respectiv din tabelul de tranziţie.
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+
+  \node[state,initial,accepting]	(0)              		{$q_0$};
+  \node[state]    			(1)   [right  of=0] 	{$q_1$};
+  \node[state,accepting]              (2)  [right of=1] 	{$q_2$};   
+
+ \path[->]
+     (0)	edge [loop above]	node	{0} ()
+           edge			node	{1} (1)
+     (1)	edge			node	{0} (2)
+           edge	[loop above] node	{1} (1)
+
+%         (1)  edge    [bend right]         node [below]{b}    (13)
+%     (123)  edge                                node             {b}    ()
+%               edge                                 node             {a}    (03)
+%      (03)  edge    [bend left]            node             {a}    (013)
+%               edge    [bend right]         node [above]{b}    (123)
+%     (013) edge    [loop below]         node              {a}    ()
+%               edge                                 node             {b}    (123)
+%     (13)   edge    [bend right=70]    node [below]{a}    (03)
+%               edge                                 node              {b}    (123)
+  ;
+\end{tikzpicture}
+\caption{Graful de tranziţie}
+\end{figure}
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{ l | c r }
+      $\;\;f$     &            0 &            1\\
+   \hline
+  *$q_{0}$    & $q_{0}$ & $q_{1}$\\
+  $\;\;q_{1}$ & $q_{2}$ & $q_{1}$\\
+  *$q_{2}$    &            -  &             -\\
+\end{tabular}
+\caption{Tabela de tranziţie}
+\end{figure}
+
+Automatul finit determinist din exemplul de mai sus acceptă limbajul următor:
+
+$L(AFD) = \{ 0^{n}1^{m}0 | n \geq 0, \; m \geq 1 \}$, unde am notat cu $a^{t}$ concatenarea simbolului $a$ cu el însuşi de un număr de $t$ ori.
+
+Iată care sunt convenţiile pentru cele două maniere de reprezentare. Începem cu graful de tranziţie. Stările se reprezintă prin cercuri, care au înscrise în ele numele. Starea iniţială este marcată printr-o săgeată. Stările finale sunt marcate prin dublarea cercurilor. Tranziţiile sunt reprezentate prin săgeţi între stări, deasupra cărora se scrie simbolul/simbolurile de la intrare în baza cărora se face schimbarea stării. În cazul tabelelor de tranziţie avem o singură convenţie, şi anume stările finale se marchează printr-o steluţă.
+
+Un automat citeşte un şir finit de simboluri $a_{1} a_{2} \dots a_{n}$, $a_{i} \in \Sigma, \forall \; 1 \leq i \leq n$. În funcţie de fiecare simbolul citit şi de starea curentă în care se află automatul la citirea simbolului respectiv, acesta execută o tranziţie, în conformitate cu definiţia funcţiei de tranziţie. Automatul se opreşte după ce a citit toate simbolurile din propoziţia de intrare, sau atunci când pentru simbolul următor de la intrare şi pentru starea curentă în care se află, nu se poate executa nicio tranziţie.
+
+\begin{definitie}
+Fie $AFD=(\Sigma, Q, F, q_{0}, f)$ un automat finit. O pereche $(x, \; q), x \in \Sigma^{*}, \; q \in Q$ se numeşte \textbf{configuraţie} a automatului finit. 
+\end{definitie}
+
+Observaţie:  $q$ este starea curentă a automatului, iar $x$ este restul şirului de la intrarea automatului, care nu a fost încă analizat.
+
+\begin{definitie}
+Fie $AFD=(\Sigma, Q, F, q_{0}, f)$ un automat finit. \textbf{Relaţia de mişcare} este o relaţie binară notată cu $\vdash$ $(\vdash \subseteq (\Sigma^{*} \times Q) \times (\Sigma^{*} \times Q))$ şi definită astfel:
+
+$(ax, q) \vdash (x, q') \Leftrightarrow f(q, a) = q'$, unde $a \in \Sigma$, $x \in \Sigma^{*}$, $q, q' \in Q$.
+\end{definitie}
+
+\begin{definitie}
+Fie $AFD=(\Sigma, Q, F, q_{0}, f)$ un automat finit. \textbf{Relaţia de mişcare în k paşi} este o relaţie binară notată cu $\vdash^{k}$ $(\vdash^{k} \subseteq (\Sigma^{*} \times Q) \times (\Sigma^{*} \times Q))$ şi definită astfel:
+
+$(a_{1} a_{2} \dots a_{k} x, q) \vdash^{k} (x, q') \Leftrightarrow \exists \; k+1$ configuraţii astfel încât 
+
+$(a_{i}a_{i+1} \dots a_{k}x, q_{i}) \vdash (a_{i+1} \dots a_{k}x, q_{i+1}), \; \forall \; 1 \leq i \leq k$, $q = q_{1}, q' = q_{k+1}$, 
+
+unde $a_{1}, a_{2}, \dots, a_{k} \in \Sigma, \; x \in \Sigma^{*}, \; q, q', q_{1}, q_{2}, \dots, q_{k+1} \in Q$.
+\end{definitie}
+
+\begin{definitie}
+Fie $AFD=(\Sigma, Q, F, q_{0}, f)$ un automat finit. \textbf{Relaţia generală de mişcare} este o relaţie binară notată cu $\vdash^{*}$ $(\vdash^{*} \subseteq (\Sigma^{*} \times Q) \times (\Sigma^{*} \times Q))$ şi definită astfel:
+
+$(x_{1}, q) \vdash^{*} (x_{2}, q') \Leftrightarrow (x_{1} = x_{2}$ şi $q = q')$ sau $((x_{1}, q) \vdash^{+} (x_{2}, q'))$, unde $x_{1}, x_{2} \in \Sigma^{*}, q, q' \in Q$.
+\end{definitie}
+
+\begin{definitie}
+Fie $AFD=(\Sigma, Q, F, q_{0}, f)$ un automat finit. Se spune că $x \in \Sigma^{*}$ este o \textbf{propoziţie acceptată} de către automat, dacă există următoarea relaţie de mişcare: $(x, q_{0}) \vdash^* (\epsilon, q')$, unde $q' \in F$.
+\end{definitie}
+
+O propoziţie acceptată de către un automat finit AFD este orice şir de simboluri din $\Sigma$, care, citit simbol cu simbol de la stânga spre dreapta, duce automatul din starea iniţială într-o stare finală.
+
+\begin{definitie}
+Fie $AFD=(\Sigma, Q, F, q_{0}, f)$ un automat finit. \textbf{Limbajul acceptat} de către automatul AFD se notează cu $L(AFD)$ şi est definit în felul următor:
+
+$L(AFD) = \{ x \in \Sigma^{*} | f^{*}(q_{0}, x) \in F \}$,
+
+unde $f$ este extinsă la $f^{*}$ astfel:
+\begin{itemize}
+\item
+$f^{*}(q, \epsilon) = q$,
+\item
+$f^{*}(q, ax) = f^{*}(f(q, a), x)$.
+\end{itemize}
+\end{definitie}
+
+Cu alte cuvinte, limbajul acceptat de către un automat finit AFD este mulţimea formată din toate şirurile de simboluri peste $\Sigma$ care sunt acceptate de către automat. 
+
+Din punct de vedere filosofic, \textit{determinismul} este credinţa potrivit căreia toate evenimentele care s-au petrecut au fost cauzate de către ceva care s-a întâmplat înaintea lor, şi deci oamenii nu au cu adevărat puterea de a alege, şi nici de a controla ceea ce se întâmplă. Atributul \textit{determinist} aplicat unui automat finit, are exact aceeaşi semnificaţie. Dacă considerăm că un eveniment înseamnă realizarea unei tranziţii, şi ştiind că acest lucru este cauzat de către starea în care se află automatul şi de către următorul simbol din şirul de intrare, vedem că în cazul unui automat finit determinist el nu poate să aleagă/să controleze ce tranziţie să execute. Tranziţia este cauzată exclusiv de starea curentă a automatului şi de simbolul citit de la intrare.
+
+Exemplu:
+
+Fie automatul finit $M=(\Sigma, Q, F, q_{0}, f)$, unde:
+\begin{itemize}
+\item
+$\Sigma=\{ a, b \}$
+\item
+$Q=\{ q_{0}, q_{1}, q_{2}, q_{3} \}$
+\item
+$F=\{ q_{3} \}$
+\item
+iar funcţia de tranziţie $f$ este definită prin următorul graf de tranziţie:
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+
+  \node[state,initial]			(0)              			{$q_0$};
+  \node[state]    			(1)   [above right  of=0] 	{$q_1$};
+  \node[state]    			(2)   [below right  of=0] 	{$q_2$};
+  \node[state,accepting]              (3)   [right of=0] 		{$q_3$};   
+
+ \path[->]
+     (0)	edge 	[bend left]		node	{a} (2)
+           edge	[bend left]		node	{b} (1)
+     (1) edge	[bend left]		node	{b} (0)
+           edge	[bend left]		node	{a} (3)
+     (2)	edge	[bend left]		node	{a} (0)
+           edge	[bend left]		node	{b} (3)
+     (3)	edge	[bend left]		node	{a} (1)
+           edge	[bend left]		node	{b} (2)
+  ;
+\end{tikzpicture}
+\caption{Exemplu AFD}
+\end{figure}
+
+\subsection{Automate finite nedeterministe}
+
+\begin{definitie}
+Un \textbf{automat finit nedeterminist} este un cvintet $AFN=(\Sigma, Q, F, q_{0}, f)$, unde $\Sigma, Q, F, q_{0}$ sunt definite în acelaşi mod ca şi pentru un automat finit determinist, iar funcţia de tranziţie $f$ este definită astfel:
+
+$f:Q \times \Sigma \rightarrow 2^{Q} - \emptyset$.
+\end{definitie}
+
+În cazul unui automat finit nedeterminist, pentru o aceeaşi stare şi pentru un acelaşi simbol de la intrare, pot exista mai multe tranziţii posibile, ceea ce înseamnă că automatul poate trece în mai multe stări. Evident, automatul nu are niciun criteriu suplimentar în baza căruia să facă alegerea.
+
+Exemplu:
+
+Fie automatul finit $M=(\Sigma, Q, F, q_{0}, f)$, unde:
+\begin{itemize}
+\item
+$\Sigma=\{ 0, 1 \}$
+\item
+$Q=\{ q_{0}, q_{1}, q_{2}, q_{3} \}$
+\item
+$F=\{ q_{3} \}$
+\item
+iar funcţia de tranziţie $f$ este definită prin următorul graf de tranziţie:
+\end{itemize}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+
+  \node[state,initial]			(0)              			{$q_0$};
+  \node[state]    			(1)   [above right  of=0] 	{$q_1$};
+  \node[state]    			(2)   [below right  of=0] 	{$q_2$};
+  \node[state,accepting]              (3)   [right of=0] 		{$q_3$};   
+
+ \path[->]
+     (0)	edge 			node	{0} (1)
+           edge			node	{1} (2)
+           edge	[loop above]	node	{0,1} (0)
+     (1) edge			node	{0} (3)
+           edge [loop above]	node	{0,1} (1)
+     (2)	edge			node	{1} (3)
+  ;
+\end{tikzpicture}
+\caption{Exemplu AFN}
+\end{figure}
+
+Se observă că dacă automatul finit se află în starea $q_{0}$, iar la intrare urmează simbolul $0$, atunci el poate fie să rămână în starea $q_{0}$, fie să treacă în starea $q_{1}$. Analog şi pentru starea $q_{1}$. Prin urmare, acest automat este un automat finit nedeterminist.
+
+Automatele finite deterministe şi automatele finite nedeterministe sunt echivalente (au aceeaşi expresivitate). Automatele finite nedeterministe au fost introduse pentru ca problema construirii unui automat finit care să definească un limbaj dat să fie mai uşor de abordat, prin eliminarea restricţiei privind faptul că tranziţiile care pleacă din aceeaşi stare trebuie să se facă în baza unor simboluri distincte. 
+
+Din punct de vedere al implementării analizei realizate de către un automat finit nedeterminist, problema se poate reformula în felul următor. Pentru o stare curentă dată şi pentru următorul simbol citit de la intrare, schimbarea stării curente a automatului poate da mai multe rezultate. Adică algoritmul care descrie funcţionarea unui automat finit nedeterminist este şi el nedeterminist. Un astfel de algoritm se poate implementa numai prin backtracking sau explorând în paralel toate soluţiile posibile. O astfel de implementare este însă costisitoare şi ineficientă. De aceea implementarea funcţionării unui automat finit nedeterminist nu se face ca atare. Se procedează în felul următor: se deduce automatul finit determinist echivalent cu automatul finit nedeterminist dat, şi apoi se face implementarea pentru cel determinist.
+
+\begin{teorema}
+Pentru orice automat finit nedeterminist $M=(\Sigma, Q, F, q_{0}, f)$, există un automat finit determinist $M'$ echivalent, adică $L(M') = L(M).$
+\end{teorema}
+
+Fie $M=(\Sigma, Q, F, q_{0}, f)$ un automat finit nedeterminist. Atunci automatul finit determinist echivalent $M'$ este definit astfel $M'=(\Sigma, Q', F', q_{0}', f')$, unde:
+
+\begin{center}
+  \begin{tabular}{| l | l | p{5cm} | }
+    \hline
+    & AFN & AFD \\ \hline
+    Alfabetul & $ \Sigma $ & $ \Sigma $\\ \hline
+    M. stărilor & $Q=\{q_{0}, q_{1}, q_{2}, \dots q_{n}\}$ & $Q'=\{ \emptyset, \{q_{0}\}, \{q_{1}\}, \{q_{2}\}, \linebreak \dots, \{q_{n}\}, \{q_{0}, q_{1}\}, \{q_{0}, q_{2}\}, \dots, \linebreak \{q_{0}, q_{n}\}, \dots, \{q_{n-1}, q_{n}\}, \dots, \linebreak \{q_{0}, q_{1}, \dots q_{n}\} \}$ \\ \hline
+    Starea iniţială & $q_{0}$ & $\{q_{0}$\} \\ \hline
+    M. stărilor finale & $F \subset Q$ & $F'=\{s \in Q'| \linebreak s$ \textit{conţine cel puţin o stare finală  a AFN} $\}$ \\ \hline
+    Tranziţii & f & $f'(\{ q_{i_{1}}, q_{i_{2}}, \dots, q_{i_{k}} \}, a)= \linebreak f(q_{i_{1}}, a) \cup f(q_{i_{2}}, a) \cup \dots \cup f(q_{i_{k}}, a)$ \\ \hline
+  \end{tabular}
+\end{center}
+
+După generarea elementelor automatului finit determinist pornind de la cele ale automatului finit nedeterminist, se elimina stările şi tranziţiile inutile. Stările inutile sunt stările la care automatul nu poate ajunge pornind din starea iniţială şi făcând una sau mai multe tranziţii. Tranziţiile inutile sunt tranziţiile care pleacă dintr-o stare inutilă.
+
+Cele două automate au acelaşi alfabet $ \Sigma $. Fiind echivalente (adică definind acelaşi limbaj), este normal ca alfabetul să fie şi el acelaşi. 
+
+Mulţimea stărilor automatului finit determinist echivalent $ Q' $ este formată din combinările stărilor automatului finit nedeterminist luate, pe rând, câte 0, câte una, câte două, câte trei, ş.a.m.d., până la cardinalul mulţimii stărilor automatului finit nedeterminist. 
+
+Mulţimea stărilor finale ale automatului finit determinist echivalent $ F' $ este formată din toate elementele mulţimii stărilor automatului finit determinist echivalent, în denumirea cărora apare cel puţin o stare finală a automatului nedeterminist. 
+
+$ F' = \{ \{ q_{0}, q_{1}, \dots, q_{k} \} \in Q' | \; \exists \; 0 \leq i \leq k \; a.i. \; q_i \in F \} $.
+
+Valoarea funcţiei de tranziţie a automatului finit determinist echivalent pentru o stare $ q_{i_{1}}, q_{i_{2}}, \dots, q_{i_{k}} $ şi un simbol $ a \in \Sigma $ este egală cu reuniunea valorilor funcţiei de tranziţie a automatului nedeterminist pentru fiecare dintre componentele stării şi pentru simbolul $ a $.
+
+Exemplu:
+
+În continuare vom exemplifica aplicarea teoremei deducerii automatului finit determinist echivalent, pentru automatul finit nedeterminist dat prin graful de tranziţie din figura următoare:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.5cm,on grid,auto]
+
+  \node[state,initial]       		(0)              			 {$q_0$};
+  \node[state,accepting]    	(1)   [ right  of=0] 		 {$q_1$};
+  \node[state]          		(2)   [below of = 1]		 {$q_2$};   
+
+ \path[->]
+     (0)    edge			node	{0} (1)
+             edge				node   {1} (2)
+             edge      [loop above]	node   {0}(0)
+     (1)   edge	     [loop above]	node  {0} (1)
+     (2)   edge      [bend right]		node  {0}(1)
+            edge       [loop above]      node   {1}(1)
+    
+   ;         
+\end{tikzpicture}
+\caption{Un automat finit nedeterminist}
+\end{figure}
+
+Aplicând teorema deducerii automatului finit nedeterminist, se poate afirma că pentru automatul finit nedeterminist $M=(\Sigma, Q, F, q_{0}, f)$ dat prin graful de tranziţie anterior, există un automat finit determinist $M'=(\Sigma, Q', F', q_{0}', f')$ echivalent, adică care recunoaşte acelaşi limbaj. Elementele acestui automat finit determinist se deduc pornind de la elementele corespunzătoare ale automatului finit nedeterminist de la care se pleacă, aşa cum arată teorema. Mai jos este dat tabelul funcţiei de tranziţie $ f' $ a automatului finit determinist echivalent.
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{ l | c |  r }
+      $\;\;f'$     &            0   &            1\\
+   \hline
+      $\;\;\varnothing$  & $\varnothing$   & $\varnothing$\\
+      $\;\;\{q_{0}\}$  &\{$q_{0} q_{1}$\}  & $\;\{q_{2}$\}\\
+     *$\{q_{1}\}$    & \{$q_{1}$\} & $\varnothing$\\
+      $\;\;\{q_{2}\}$ & \{$q_{1}$\} & \{$q_{2}$\}\\
+     *$\{q_{0} q_{1}\}$    &    \{$q_{0} q_{1}$\}          &             \{$q_{2}$\}\\
+      $\;\;\{q_{0} q_{2}\}$    &	 \{$q_{0} q_{1}$\}	&	  \{$q_{2}$\}\\
+     *$\{q_{1} q_{2}\}$    &    \{$q_{1}$\}          &             \{$q_{2}$\}\\
+     *$\{q_{0} q_{1} q_{2}\}$    &    \{$q_{0} q_{1}$\}          &             \{$q_{2}$\}\\
+      
+\end{tabular}
+\caption{Funcţia de tranziţie a automatului finit determinist echivalent}
+\end{figure}
+
+După deducerea elementelor automatului finit determinist echivalent, urmează etapa eliminării stărilor şi tranziţiilor inutile. Pentru a fi uşor de observat care sunt stările şi tranziţiile inutile, se va desena graful de tranziţie al automatului finit determinist echivalent, pe baza tabelului funcţiei de tranziţie.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.5cm,on grid,auto]
+
+  \node[state,initial]       		(0)              		{$\{q_0\}$};
+  \node[state,accepting]           (1)    [right of=0]		{$\{q_0 q_1\}$};
+  \node[state]              (2)   [ below  of = 0]			{$\{q_2\}$};  
+  \node[state,accepting]   	(3)   [right  of=1] 			{$\{q_1\}$}; 
+  \node[state]    			(4)   [right  of=2] 			{$\{q_0 q_2\}$};
+  \node[state,accepting]    (5)   [below right  of = 2]		{$\{q_1 q_2\}$};  
+  \node[state,accepting]    (6)   [right  of = 4]		    {$\{q_0 q_1 q_2\}$};  
+   
+ \path[->]
+   (0)    edge			node		{0} (1)
+          edge			node 		{1} (2)
+   (1)    edge			node		{1}(2)
+   	      edge [loop above]  node	{0}(1)
+   (2)    edge 			     node	{0}(3)
+          edge [loop left]  node   {1}(2)
+   (3)    edge [loop above]  node	{0}(3)
+   (4)    edge	[bend right] node	{0}(1)
+   	      edge			node		{1}(2)
+   (5) 	  edge	[bend right] node	{0}(3)
+   	      edge				 node	{1}(2)
+   (6) 	  edge	[bend right] node	{0}(1)
+   	      edge	[bend left]	 node	{1}(2)
+;
+\end{tikzpicture}
+\caption{Graful de tranziţie (complet) al automatului finit determinist echivalent}
+\end{figure}
+
+Se observă că stările $ \{q_0 q_2\}, \{q_1 q_2\} $ şi $ \{ q_0 q_1 q_2 \} $ au numai tranziţii care pleacă din ele, însă nicio tranziţie care ajunge în ele. Prin urmare, nu există nicio succesiune de tranziţii care să ajungă din starea iniţială a automatului finit în aceste stări. Ca urmare, ele sunt stări inutile, iar tranziţiile care pleacă din ele sunt tranziţii inutile; ele pot fi eliminate din automat fără a afecta limbajul recunoscut de către acesta. 
+
+După eliminarea stărilor şi tranziţiilor inutile, se obţine automatul finit determinist echivalent final.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.0cm,on grid,auto]
+
+  \node[state,initial]       (0)              		{$\{q_0\}$};
+   \node[state,accepting]    (1)   [right of=0]		{$\{q_0 q_1\}$};
+  \node[state]		         (2)   [ below  of = 1]	{$\{q_2\}$};  
+   \node[state,accepting]    (3)   [right  of=1] 	{$\{q_1\}$};
+ 
+ \path[->]
+   (0)    edge				node	{0} (1)
+          edge				node 	{1} (2)
+   (1)    edge				node	{1} (2)
+	   	  edge [loop above] node	{0} (1)
+   (2)    edge 				node	{0} (3)
+   		  edge [loop below] node	{1} (2)
+   (3)    edge [loop above] node	{0} (3)
+   
+;
+\end{tikzpicture}
+\caption{Graful de tranziţie (redus) al automatului finit determinist echivalent}
+\end{figure}
+
+În practică, se poate sări peste etapa desenării grafului de tranziţie complet şi a eliminării ulterioare a stărilor şi tranziţiilor inutile, construind direct numai partea utilă a acestuia. În acest sens se va proceda în felul următor. Se desenează starea iniţială şi tranziţiile care pleacă din aceasta (ceea ce va implica desenarea stărilor în care se poate ajunge plecând din starea iniţială). Apoi, pentru fiecare dintre noile stări desenate, se va proceda în acelaşi mod: se vor desena toate tranziţiile care pleacă din fiecare dintre noile stări (ceea ce va implica probabil desenarea unor noi stări). Procesul se repetă pentru fiecare nouă stare desenată la pasul anterior, până în momentul în care nu mai este desenată nicio nouă stare. Graful obţinut este graful de tranziţie redus, iar stările şi tranziţiile care apar în tabelul funcţiei de tranziţie, dar care nu au fost desenate, sunt stări şi tranziţii inutile.
+
+În continuare, vom exemplifica acest proces pentru graful anterior. Se pleacă de la tabelul funcţiei de tranziţie $ f' $ şi se începe prin desenarea stării iniţiale.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.0cm,on grid,auto]
+
+  \node[state,initial]       (0)              		{$\{q_0\}$};
+
+\end{tikzpicture}
+\caption{Construirea directă a grafului de tranziţie minimal al automatului finit determinist echivalent}
+\end{figure}
+
+Se desenează apoi cele două tranziţii care pleacă din starea iniţială, ceea ce va implica desenarea stărilor $\{q_2\}$ şi $\{q_0 q_1\}$.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.0cm,on grid,auto]
+
+  \node[state,initial]       (0)              		{$\{q_0\}$};
+   \node[state,accepting]    (1)   [right of=0]		{$\{q_0 q_1\}$};
+  \node[state]		         (2)   [ below  of = 1]	{$\{q_2\}$};  
+ 
+ \path[->]
+   (0)    edge				node	{0} (1)
+          edge				node 	{1} (2)
+   
+;
+\end{tikzpicture}
+\caption{Construirea directă a grafului de tranziţie minimal al automatului finit determinist echivalent}
+\end{figure}
+
+Deoarece stările $\{q_2\}$ şi $\{q_0 q_1\}$ sunt stări noi, care au apărut în urma ultimei operaţii de desenare, pentru fiecare dintre ele se va proceda la fel ca şi pentru starea iniţială. Prin urmare, se vor desena toate tranziţiile care pleacă din starea  $\{q_0 q_1\}$. În urma acestui pas, nu a fost desenată nicio stare nouă.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.0cm,on grid,auto]
+
+  \node[state,initial]       (0)              		{$\{q_0\}$};
+   \node[state,accepting]    (1)   [right of=0]		{$\{q_0 q_1\}$};
+  \node[state]		         (2)   [ below  of = 1]	{$\{q_2\}$};  
+ 
+ \path[->]
+   (0)    edge				node	{0} (1)
+          edge				node 	{1} (2)
+   (1)    edge				node	{1} (2)
+	   	  edge [loop above] node	{0} (1)
+   
+;
+\end{tikzpicture}
+\caption{Construirea directă a grafului de tranziţie minimal al automatului finit determinist echivalent}
+\end{figure}
+
+Apoi, se vor desena toate tranziţiile care pleacă din starea $\{q_2\}$. În urma acestui pas, a fost desenată noua stare $\{q_1\}$.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.0cm,on grid,auto]
+
+  \node[state,initial]       (0)              		{$\{q_0\}$};
+   \node[state,accepting]    (1)   [right of=0]		{$\{q_0 q_1\}$};
+  \node[state]		         (2)   [ below  of = 1]	{$\{q_2\}$};  
+   \node[state,accepting]    (3)   [right  of=1] 	{$\{q_1\}$};
+ 
+ \path[->]
+   (0)    edge				node	{0} (1)
+          edge				node 	{1} (2)
+   (1)    edge				node	{1} (2)
+	   	  edge [loop above] node	{0} (1)
+   (2)    edge 				node	{0} (3)
+   		  edge [loop below] node	{1} (2)
+   
+;
+\end{tikzpicture}
+\caption{Construirea directă a grafului de tranziţie minimal al automatului finit determinist echivalent}
+\end{figure}
+
+În urma paşilor anterior, a apărut o singură stare nouă, şi anume $\{q_1\}$. Prin urmare, se continuă cu desenarea tuturor tranziţiilor care pleacă din această stare.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3.0cm,on grid,auto]
+
+  \node[state,initial]       (0)              		{$\{q_0\}$};
+   \node[state,accepting]    (1)   [right of=0]		{$\{q_0 q_1\}$};
+  \node[state]		         (2)   [ below  of = 1]	{$\{q_2\}$};  
+   \node[state,accepting]    (3)   [right  of=1] 	{$\{q_1\}$};
+ 
+ \path[->]
+   (0)    edge				node	{0} (1)
+          edge				node 	{1} (2)
+   (1)    edge				node	{1} (2)
+	   	  edge [loop above] node	{0} (1)
+   (2)    edge 				node	{0} (3)
+   		  edge [loop below] node	{1} (2)
+   (3)    edge [loop above] node	{0} (3)
+   
+;
+\end{tikzpicture}
+\caption{Construirea directă a grafului de tranziţie minimal al automatului finit determinist echivalent}
+\end{figure}
+
+În urma acestui pas nu a fost desenată nicio stare nouă. Aceasta înseamnă că procesul s-a încheiat, iar graful de tranziţie obţinut este cel final. Stările $ \{q_0 q_2\}, \{q_1 q_2\} $ şi $ \{ q_0 q_1 q_2 \} $ apar în tabelul funcţiei de tranziţie, dar nu şi în cadrul acestui graf. Prin urmare aceste stări, precum şi tranziţiile care pleacă din ele, sunt inutile.
+
+\subsection{Tranziţii $\epsilon$. Automate finite $\epsilon$}
+
+O tranziţie $\epsilon$ este o tranziţie dintr-o stare în alta, fără a "consuma" niciun simbol din şirul de intrare. Aceste tranziţii sunt practic tranziţii spontane, care se fac fără a privi la simbolul care urmează în şirul de intrare. Un automat finit care are cel puţin o tranziţie $\epsilon$ se numeşte automat finit $\epsilon$.
+
+\begin{definitie}
+Un \textbf{automat finit $\epsilon$} este un cvintet $AF-\epsilon=(\Sigma \cup \{ \epsilon \}, Q, F, q_{0}, f)$, unde $\Sigma, Q, F, q_{0}$ sunt definite în acelaşi mod ca şi pentru un automat finit determinist, iar funcţia de tranziţie $f$ este definită astfel:
+
+$f:Q \times \Sigma \cup \{ \epsilon \} \rightarrow 2^{Q} - \emptyset$.
+\end{definitie}
+
+Exemplu:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm, on grid,auto]
+  \node[initial,draw, circle] 			(A)                    {$ q_0 $};
+  \node[accepting,draw, circle]         (D) [below right of=A] {$ q_1 $};
+  \node[draw, circle]         			(B) [right of=A]       {$ q_2 $};
+  \node[accepting,draw, circle]         (C) [right of=B] 	   {$ q_3 $};
+  
+  \path (A) edge                node [below]	{+ | -} 	 (B)
+ 	        edge [bend left=50] node 			{$\epsilon$} (B)
+   	        edge                node [left]		{0} 		 (D)
+        (B) edge 			    node 			{1|2|...|9}  (C)
+        (C) edge [loop right]   node 			{0|1|...|9}  (C)
+  ;					
+\end{tikzpicture}
+\end{figure}
+
+\begin{definitie}
+Fie $AF-\epsilon=(\Sigma \cup \{ \epsilon \}, Q, F, q_{0}, f)$ un automat finit $ \epsilon $. \textbf{Închiderea unei stări (closure)} $q \in Q$, notată cu $CL(q)$, este mulţimea tuturor stărilor la care se poate ajunge pornind din starea $ q $ şi făcând numai tranziţii $\epsilon$:
+
+$CL(q) = \{ q' \in Q \; | \; (x, q) \vdash^+ (x, q') \}$.
+\end{definitie}
+
+Pentru a specifica faptul că închiderea unei stări $ q $ se calculează pentru un anumit automat finit $ AF $, vom folosi notaţia $ CL(q)|_{AF} $.
+
+Automatele finite nedeterministe şi automatele finite $\epsilon$ sunt echivalente (au aceeaşi expresivitate). Tranziţiilor $\epsilon$ au fost introduse pentru ca problema construirii unui automat finit care să definească un limbaj dat să fie mai uşor de abordat, prin eliminarea restricţiei privind faptul că orice tranziţie se face în baza unui simbol. 
+
+Ca şi în cazul automatelor finite nedeterministe, implementarea funcţionării unui automat finit $\epsilon$ nu se face ca atare. În schimb, se procedează în felul următor: se deduce automatul finit nedeterminist echivalent cu automatul finit $\epsilon$ dat. Apoi se deduce automat finit determinist echivalent automatului finit nedeterminist obţinut. Şi, în cele din urmă, se face implementarea pentru cel determinist. Deducerea automatului finit nedeterminist echivalent unui automat finit $\epsilon$ se face prin eliminarea tranziţiile $\epsilon$ şi înlocuirea lor cu tranziţii noi, obţinute prin combinarea fiecărei tranziţii $\epsilon$ cu fiecare dintre tranziţiile care pleacă din starea ţintă a tranziţiei $\epsilon$ respective. 
+
+\begin{teorema}
+Pentru orice automat finit $\epsilon$ $M=(\Sigma \cup \{ \epsilon \}, Q, F, q_{0}, f)$, există un automat finit nedeterminist $M'$ echivalent, adică $L(M') = L(M).$
+\end{teorema}
+
+Fie $M=(\Sigma \cup \{ \epsilon \}, Q, F, q_{0}, f)$ un automat finit $\epsilon$. Atunci automatul finit nedeterminist echivalent $M'$ este definit astfel $M'=(\Sigma, Q', F', q_{0}, f')$, unde:
+
+\begin{center}
+  \begin{tabular}{| l | l | p{8cm} | }
+    \hline
+    & AF$\epsilon$ & AFD \\ \hline
+    Alfabetul & $ \Sigma \cup \{ \epsilon \} $ & $ \Sigma $\\ \hline
+    M. stărilor & $Q=\{q_{0}, q_{1}, q_{2}, \dots q_{n}\}$ & $Q'=\{q_{0}, q_{1}, q_{2}, \dots q_{n}\}$ \\ \hline
+    Starea iniţială & $q_{0}$ & $q_{0}$\\ \hline
+    M. stărilor finale & $F \subset Q$ & $F'=F \cup \{q' \in Q' \; | \; \exists \; s \in CL(q')|_{AF\epsilon} \; a.i. \; s \in F \}$ \\ \hline
+    Tranziţii & f & $f'(q,a)=f(q,a)$ \newline $ f'(q,b) = f(f( \dots f(q,\epsilon)\dots,\epsilon),b) $ \newline $ \; \forall \; q \in Q' \; şi \; a,b \in \Sigma $ \\ \hline
+  \end{tabular}
+\end{center}
+
+După generarea elementelor automatului finit nedeterminist pornind de la cele ale automatului finit $\epsilon$, se elimina stările şi tranziţiile inutile.
+
+Vom exemplifica deducerea automatului finit nedeterminist echivalent pentru automatul finit $\epsilon$ din exemplul anterior:
+
+\begin{itemize}
+\item
+Primul pas constă în rescrierea automatului finit fără tranziţiile $\epsilon$.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm, on grid,auto]
+  \node[initial,draw, circle] 			(A)                    {$ q_0 $};
+  \node[accepting,draw, circle]         (D) [below right of=A] {$ q_1 $};
+  \node[draw, circle]         			(B) [right of=A]       {$ q_2 $};
+  \node[accepting,draw,circle]         (C) [right of=B] 	   {$ q_3 $};
+  
+  \path (A) edge                node [below]	{+ | -} 	 (B)
+   	        edge                node [left]		{0} 		 (D)
+        (B) edge 			    node 			{1|2|...|9}  (C)
+        (C) edge [loop right]   node 			{0|1|...|9}  (C)
+  ;					
+\end{tikzpicture}
+\end{figure}
+
+\item 
+Al doilea pas constă în înlocuirea fiecărei tranziţii $\epsilon$ conform regulii enunţate mai sus. 
+
+În acest caz, automatul finit $\epsilon$ are o singură tranziţie $\epsilon$, şi anume cea din starea $ q_0 $ în starea $ q_2 $. Pentru a putea stabili tranziţia sau tranziţiile cu care această tranziţie $\epsilon$ va fi înlocuită, trebuie să se aibă în vedere toate tranziţiile care pleacă din starea în care ajunge tranziţia $\epsilon$, şi anume starea $ q_2 $. Din starea $ q_2 $ pleacă o singură tranziţie, cea către starea $ q_3 $, în baza simbolurilor $1\mid2\mid\dots\mid9$. 
+
+$ f(q_0, \epsilon) = q_2  \; şi \; f(q_2, 1\mid2\mid\dots\mid9) = q_3 $ $ \Leftrightarrow $ $ f(f(q_0, \epsilon),1\mid2\mid\dots\mid9) = q_3 $ 
+
+Deci tranziţia $\epsilon$ din starea $ q_0 $ în starea $ q_2 $ va fi înlocuită cu o tranziţie din starea $ q_0 $ în starea în care ajunge tranziţia care pleacă din $ q_2 $, şi anume în starea $ q_3 $, în baza aceloraşi simboluri ca şi cele consumate de tranziţia din starea $ q_2 $ în starea $ q_3 $ ($1\mid2\mid\dots\mid9$).
+
+$ f'(q_0, 1\mid2\mid\dots\mid9) = q_3 $
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=3cm, on grid,auto]
+  \node[initial,draw, circle] 			(A)                    {$ q_0 $};
+  \node[accepting,draw, circle]         (D) [below right of=A] {$ q_1 $};
+  \node[draw, circle]         			(B) [right of=A] 	   {$ q_2 $};
+  \node[accepting,draw, circle]         (C) [right of=B] 	   {$ q_3 $};
+  
+  \path (A) edge                         node [below]{+ | -} (B)
+    	    edge [bend left=50, blue] node {1|2|...|9} (C)
+   	        edge	                   node[left] {0} (D)
+        (B) edge                         node {1|2|...|9} (C)
+        (C) edge  [loop right]     node {0|1|...|9} (C);					
+\end{tikzpicture}
+\end{figure}
+
+În eliminarea tranziţiilor $\epsilon$ poate să apară situaţia în care din starea în care se trece prin tranziţia $\epsilon$ nu pleacă nicio tranziţie. În acest caz, tranziţia $\epsilon$ respectivă nu este înlocuită cu nicio altă tranziţie.
+\item
+Al treilea pas constă în determinarea stărilor automatului finit nedeterminist echivalent care vor deveni stări finale. Toate stările automatului finit $\epsilon$ ale căror închideri conţin o stare finală, devin stări finale în automatul finit nedeterminist echivalent.
+
+Se începe prin calcularea închiderii stărilor automatului finit $\epsilon$.
+
+$ CL(q_0) = \{ q_2 \} $, iar $ CL(q_1) = CL(q_2) = CL(q_3) = \emptyset $
+
+Deoarece niciuna dintre închideri nu conţine o stare finală a automatului finit $\epsilon$, în automatul finit nedeterminist echivalent stările nu se modifică.
+\end{itemize}
+
+\subsection{Automate finite versus gramatici regulate}
+
+Atunci când s-a vorbit despre clasificarea gramaticilor, a fost definit tipul gramaticilor regulate. Automatele finite, indiferent de tip, permit definirea numai a unor limbaje regulate. Este foarte simplu de observat acest lucru, încercând să construim gramatica formală care defineşte acelaşi limbaj ca şi un automat finit dat. De exemplu, pentru automatul finit determinist următor:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+\node[state,initial,accepting] (0) {$q_0$};
+\node[state,accepting] (1) [right  of=0] {$q_1$};
+\node[state] (2) [right of=1] {$q_2$};   
+
+\path[->]
+     (0) edge [loop above] node {0} (0)
+         edge node {1} (1)
+     (1) edge node {0} (2)
+         edge [loop above] node	{1} (1)
+	 (2) edge [loop above] node {0,1} (2)
+	 ;
+\end{tikzpicture}
+\end{figure}
+
+mulţimea regulilor de producţie a gramaticii care defineşte acelaşi limbaj, are elementele:
+
+\begin{itemize}
+\item
+$S \rightarrow 0S \ | \ 1P \ | \epsilon$
+\item
+$P \rightarrow 1P \ | \ 0Q \ | \epsilon$
+\item
+$Q \rightarrow 0Q \ | \ 1Q$
+\end{itemize}
+
+Prin urmare, automatele finite şi gramaticile regulate sunt echivalente.
+
+\subsection{Exerciţii}
+
+\begin{enumerate}
+\item
+Să se construiască un automat finit care să definească limbajul numerelor naturale. Apoi, să se precizeze ce fel de automat finit a fost construit şi să se scrie succesiunea de relaţii de mişcare pentru analiza propoziţiilor 1310 şi 001.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+
+  \node[state,initial]       		(0)              		{$q_0$};
+  \node[state,accepting]    	(1)   [right  of=0] 	{$q_1$};
+  \node[state,accepting]              (2)   [below  of = 1]	{$q_2$};   
+
+ \path[->]
+   (0)     edge			node	{0} (1)
+              edge			node {1...9} (2)
+     (2)    
+              edge	[loop above] node	{0...9} (2)
+
+;
+\end{tikzpicture}
+\end{figure}
+
+Se observă că automatul finit construit este un automat finit determinist.
+
+$  (1310,q_0)  \vdash (310,q_2) \vdash  (10,q_2) \vdash (0,q_2) \vdash  (\epsilon,q_2)$ $ \Leftrightarrow 1310 \in L(AF)$
+
+Configuraţia $ (\epsilon,q_2) $ este o configuraţie finală, deoarece automatul nu mai poate executa nicio tranziţie. Deoarece automatul a consumat toate simbolurile propoziţiei şi în plus a rămas în starea $ q_2 $, care este o stare finală, înseamnă că propoziţia a fost acceptată şi deci aparţine limbajului definit de către automat.
+
+$  (001,q_0)  \vdash (01,q_1)  \Leftrightarrow 001 \notin L(AF)$
+
+Configuraţia $ (01,q_1) $ este o configuraţie finală, deoarece automatul nu mai poate executa nicio tranziţie. Deoarece automatul nu a consumat toate simbolurile propoziţiei, înseamnă că propoziţia nu a fost acceptată şi deci nu aparţine limbajului definit de către automat.
+
+\item
+Să se construiască un automatul finit care defineşte limbajul format din mulţimea propoziţiilor alcătuite pe baza simbolurilor 0 şi 1 şi formate dintr-un număr par de 0, urmaţi de un număr impar de 1. Apoi, să se precizeze ce fel de automat finit a fost construit şi să se scrie succesiunea de relaţii de mişcare pentru analiza propoziţiilor 001 şi 0011.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+  \node[state,initial]       		(0)              			{$q_0$};
+  \node[state]    					(1)   [ right  of=0] 		{$q_1$};
+  \node[state]			          	(2)   [right of = 1]		{$q_2$};   
+  \node[state,accepting]			(3)   [below of=1]     	 	{$q_3$};
+  \node[state]                      (4)   [right of=3]		 	{$q_4$}; 
+
+ \path[->]
+     (0)    edge			        node  {0} (1)
+     (1)    edge				    node  {0} (2)
+     (2)    edge       [bend left]  node  {0}(1)
+            edge                    node  {1}(3)
+     (3)    edge      				node  {1}(4)
+     (4)    edge       [bend left]  node  {1}(3)
+;
+\end{tikzpicture}
+\end{figure}
+
+Se observă că automatul finit construit este un automat finit determinist.
+
+$  (001,q_0)  \vdash (01,q_1) \vdash  (1,q_2) \vdash (\epsilon,q_3)$ $  \Leftrightarrow 001 \in L(AF) $
+
+Configuraţia $ (\epsilon,q_3) $ este o configuraţie finală, deoarece automatul nu mai poate executa nicio tranziţie. Deoarece automatul a consumat toate simbolurile propoziţiei şi în plus a rămas în starea $ q_3 $, care este o stare finală, înseamnă că propoziţia a fost acceptată şi deci aparţine limbajului definit de către automat.
+
+$  (0011,q_0)  \vdash (011,q_1) \vdash  (11,q_2) \vdash (1,q_3) \vdash  (\epsilon,q_4)$ $  \Leftrightarrow 0011 \notin L(AF) $
+
+Configuraţia $ (\epsilon,q_4) $ este o configuraţie finală, deoarece automatul nu mai poate executa nicio tranziţie. Cu toate că automatul a consumat toate simbolurile propoziţiei, deoarece starea $ q_4 $ nu este o stare finală, înseamnă că propoziţia nu a fost acceptată şi deci nu aparţine limbajului definit de către automat.
+
+\item
+Sa se construiască un automat finit care să definească limbajul numerelor reale scrise folosind separatorul de mii (virgula). Apoi, să se precizeze ce fel de automat finit a fost construit şi să se scrie succesiunea de relaţii de mişcare pentru analiza propoziţiilor 1,925.12 şi 15,0.1.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+  \node[state,initial]      (0)              			{$q_0$};
+  \node[state]    			(1)   [right of=0]	 		{$q_1$};
+  \node[state]          	(2)   [right of=1]			{$q_2$};   
+  \node[state,accepting]	(3)   [right of=2]     		{$q_3$};
+  \node[state]				(4)   [below of =1]		 	{$q_4$};
+  \node[state]				(5)   [right of=4]		 	{$q_5$};
+  \node[state]				(6)   [below left of=4]	 	{$q_6$};
+  \node[state]				(7)   [below of=5]		 	{$q_7$};
+  \node[state]				(8)   [right of=7]			{$q_8$};
+  \node[state]				(9)   [right of=8]		 	{$q_9$};
+  \node[state]				(10)  [above of=1]		 	{$q_10$};
+
+ \path[->]
+     (0)    edge					node	{1...9} (1)
+			edge					node	{0}     (10)
+     (1)   	edge					node  	{.} (2)
+	  		edge					node	{0...9}(4)
+            edge  [bend right]    	node	{,} (6)
+     (2)    edge					node	{0...9} (3)
+     (3)    edge  [loop above]     	node	{0...9}(3)
+     (4)    edge  					node	{0...9}(5)
+            edge 					node	{,}(6)
+            edge 					node	{.}(2)
+     (5)    edge [bend left]		node	{,}(6)
+		    edge 					node	{.}(2)
+     (6)    edge [bend right]		node	{0...9}(7)
+     (7)    edge					node	{0...9}(8)
+     (8)    edge 					node	{0...9}(9)
+     (9)    edge  					node	{.}(3)
+     		edge [bend left] 		node	{,}(6)
+     (10)	edge					node 	{.}(2)
+;
+\end{tikzpicture}
+\end{figure}
+
+Se observă că automatul finit construit este un automat finit determinist.
+
+$  (1,925.12,q_0)  \vdash (,925.12,q_1) \vdash  (925.12,q_6) \vdash (25.12,q_7) \vdash  (5.12,q_8)$ $ \vdash  (.12,q_9) $ $ \vdash  (12,q_3) $ $ \vdash  (2,q_3) $ $ \vdash  (\epsilon,q_3) $ $  \Leftrightarrow 1,925.12 \in L(AF) $
+
+Configuraţia $ (\epsilon,q_3) $ este o configuraţie finală, deoarece automatul nu mai poate executa nicio tranziţie. Deoarece automatul a consumat toate simbolurile propoziţiei şi în plus a rămas în starea $ q_3 $, care este o stare finală, înseamnă că propoziţia a fost acceptată şi deci aparţine limbajului definit de către automat.
+
+$  (15,0.1,q_0)  \vdash (5,0.1,q_1) \vdash (,0.1,q_4) \vdash  (0.1,q_6) \vdash  (.1,q_7)$ $  \Leftrightarrow 15,0.1 \notin L(AF) $
+
+Configuraţia $ (.1,q_7) $ este o configuraţie finală, deoarece automatul nu mai poate executa nicio tranziţie. Deoarece automatul nu a consumat toate simbolurile propoziţiei, înseamnă că aceasta nu a fost acceptată şi deci nu aparţine limbajului definit de către automat.
+
+\item
+Să se construiască un automat finit cu exact trei stări, care să accepte limbajul alcătuit din propoziţii de forma 0$*$1$*$0$*$0. Apoi, să se precizeze ce fel de automat finit a fost construit şi să se scrie succesiunea de relaţii de mişcare pentru analiza propoziţiilor 0010 şi 0111.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,
+                    semithick]
+\node[initial,state] (0)                    {$q_0$};
+  \node[state,accepting]         (1) [right of=0] {$q_1$};
+  \node[state]         (2) [below of=0] {$q_2$};
+  \path (0) edge      [loop above]        node {0} (0)
+            edge              node {1} (2)
+	edge  node {0} (1)
+        (1)   edge   [loop above]           node  {0} (1)
+        (2) edge              node {0} (1)
+            edge   [loop below] node {1} (2);
+\end{tikzpicture}
+\end{figure}
+
+Se observă că automatul finit construit este un automat finit nedeterminist, deoarece din starea $ q_0 $ pleacă două tranziţii pentru acelaşi simbol $ 0 $.
+
+\[
+    (0010,q_0)= 
+    \begin{cases}
+       \vdash (010,q_0) 
+       \begin{cases}
+          \vdash (10,q_0) \vdash (0,q_2) \vdash (\epsilon,q_1) \\
+          \vdash (10,q_1)
+       \end{cases}\\
+       \vdash (010,q_1) \vdash (10,q_1)
+\end{cases}
+\]
+
+$ \Leftrightarrow 0010 \in L(AF) $
+
+
+
+\[
+    (0111,q_0)= 
+    \begin{cases}
+       \vdash (111,q_0) \vdash (11,q_2) \vdash (1,q_2) \vdash (\epsilon,q_2)\\
+       \vdash (111,q_1)
+\end{cases}
+\]
+
+$ \Leftrightarrow 0111 \notin L(AF)$
+
+Deoarece automatul este un automat finit nedeterminist, analiza propoziţiilor nu mai este liniară, ci arborescentă. De fiecare dată când pentru perechea formată din starea curentă şi simbolul de intrare există mai multe tranziţii posibile, va apărea o împărţire în mai multe direcţii posibile de continuare. Se va obţine astfel un arbore. Dacă în arbore există cel puţin o ramură pe care propoziţia a fost acceptată, atunci ea aparţine limbajului definit de către automat. Dacă în arbore nu există nicio ramură pe care propoziţia să fi fost acceptată, atunci ea nu aparţine limbajului definit de către automat.
+
+Pentru exemplele de mai sus, propoziţia 0010 a fost acceptată pe ramura care se termină cu $ (\epsilon,q_1) $ şi deci aparţine limbajului definit de către automat. În schimb, propoziţia 0111 nu a fost acceptată pe nicio ramură şi deci nu aparţine limbajului definit de către automat.
+
+\item
+Să se deducă automatul finit determinist echivalent pentru următorul automat finit nedeterminist:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto] 
+\node [state, initial] (0) {$q_0$};
+\node [state] [right of=0](1) {$q_1$};
+\node [state] [below of=1] (2) {$q_2$};
+\node [state, accepting] [below right of=1] (3) {$q_3$};
+
+\path[->]
+	(0) edge [loop above] 	node{0,1}()
+	(0) edge 				node{0}(1)
+	(0) edge				node{1}(2)
+	(1) edge [loop above] 	node{0,1}()
+	(1) edge				node{0}(3)
+	(2) edge				node{1}(3)	
+;
+\end{tikzpicture}
+\end{figure}
+
+Elementele automatului finit determinist echivalent se deduc aplicând teorema cu acelaşi nume. Toate aceste elemente pot fi observate în tabelul de definiţie a funcţiei de tranziţie a acestui automat, dat mai jos.
+
+\begin{figure}[H]
+\centering
+\begin{tabular}{ l | c r }
+   $\;\;f'$     &            0 &            1\\
+   \hline
+   $\varnothing$ & $\varnothing$ & $\varnothing$\\
+   \{$q_{0}$\}	& 	\{$q_{0} q_{1}$\}	&	\{$q_{0} q_{2}$\}\\
+   \{$q_{1}$\} 	&	 \{$q_{1} q_{3}$\}	 &	 \{$q_{1}$\}\\
+   \{$q_{2}$\}	&	$\varnothing$		&	\{$q_{3}$\}\\
+   *\{$q_{3}$\}	&	$\varnothing$	&	$\varnothing$\\
+   \{$q_{0} q_{1}$\}		&	\{$q_{0} q_{1} q_{3}$\}	&	\{$q_{0} q_{1} q_{2}$\}\\
+   \{$q_{0} q_{2}$\}	&	\{$q_{0} q_{1}$\} 	&	\{$q_{0} q_{2} q_{3}$\}\\
+   *\{$q_{0} q_{3}$\}		& \{$q_{0} q_{1}$\}	&	 \{$q_{0} q_{2}$\}\\
+   \{$q_{1} q_{2}$\}		&	 \{$q_{1} q_{3}$\}  &	\{$q_{1} q_{3}$\}\\
+   *\{$q_{1} q_{3}$\} 	&	 \{$q_{1} q_{3}$\}	&	\{$q_{1}$\}\\
+   *\{$q_{2} q_{3}$\}  	&	$\varnothing$	&	\{$q_{3}$\}\\
+   \{$q_{0} q_{1} q_{2}$\}	&	\{$q_{0} q_{1} q_{3}\}$	&	\{$q_{0} q_{1} q_{2} q_{3}$\}\\
+   *\{$q_{0} q_{1} q_{3}$\}	&	\{$q_{0} q_{1} q_{3}\}$	&	\{$q_{0} q_{1} q_{2}$\}\\
+   *\{$q_{0} q_{2} q_{3}$\}	&	\{$q_{0} q_{1}$\}		&	\{$q_{0} q_{2} q_{3}$\}\\
+   *\{$q_{1} q_{2} q_{3}$\}	&	\{$q_{1} q_{3}\}$	&	\{$q_{1} q_{3}$\}\\
+   *\{$q_{0} q_{1} q_{2} q_{3}$\}	&	\{$q_{0} q_{1} q_{3}$\}	&	 \{$q_{0} q_{1} q_{2} q_{3}$\}\\
+\end{tabular}
+
+Graful de tranziţie redus al automatului finit determinist echivalent este următorul:
+
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto] 
+\node [state, initial] 					(0) {$q_{0}$};
+\node [state] [right of=0] 				(1) {$q_{0} q_{1}$};
+\node [state] [below of=0] 				(3)	{$q_{0} q_{2}$};
+\node [state, accepting] [below of=3] 	(4) {$q_{0} q_{2} q_{3}$};
+\node [state] [below right of=1] 		(5) {$q_{0} q_{1} q_{2}$};
+\node [state, accepting] [below of=5] 	(6) {$q_{0} q_{1} q_{3}$};
+\node [state, accepting] [right of=6] 	(7) {$q_{0} q_{1} q_{2} q_{3}$};
+
+\path[->]
+	(0)	edge 				node{0}(1)
+	(0) edge 				node{1}(3)
+	(1)	edge [bend right]	node{1}(5)
+	(1)	edge [bend right]	node{0}(6)
+	(2)	edge [bend left] 	node{1}(5)
+	(3)	edge 				node{0}(1)
+	(3)	edge				node{1}(4)
+	(4)	edge				node{0}(1)
+	(4)	edge [loop below] 	node{1}()
+	(5)	edge 				node{0}(6)
+	(5)	edge 				node{1}(7)
+	(6)	edge [loop below]   node{0}()
+	(7)	edge [loop below] 	node{1}()
+	(7)	edge 				node{0}(6)
+;
+\end{tikzpicture}
+\caption{Automatul finit determinist}
+\end{figure}
+
+\item
+Să se deducă automatul finit nedeterminist echivalent pentru următorul automat finit $ \epsilon $:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\node [initial, state] 		(0) 					{$q_0$};
+\node [state] 				(1) [right of=0] 		{$q_1$};
+\node [state] 				(2) [below of=1] 		{$q_2$};
+\node [state] 				(3) [right of=1] 		{$q_3$};
+\node [state, accepting] 	(4) [right of=3] 		{$q_4$};
+
+\path [->]
+	(0) edge				node{$\epsilon$}(1)
+	(1) edge				node{a}(2)
+	(1) edge 				node{a}(3)
+	(2) edge [bend left]	node{$\epsilon$}(1)
+	(2) edge [bend left] 	node{b}(3)
+	(3) edge [bend left] 	node{$\epsilon$}(2)
+	(3) edge 				node{a}(4)
+	(3) edge [bend left]	node{$\epsilon$}(4)
+;
+\end{tikzpicture}
+\end{figure}
+
+Primul pas al construcţiei automatului finit nedeterminist echivalent este desenarea grafului de tranziţie a automatului fără tranziţiile $ \epsilon $.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+\node [initial, state] 		(0) 					{$q_0$};
+\node [state] 				(1) [right of=0] 		{$q_1$};
+\node [state] 				(2) [below of=1] 		{$q_2$};
+\node [state] 				(3) [right of=1] 		{$q_3$};
+\node [state, accepting] 	(4) [right of=3] 		{$q_4$};
+
+\path [->]
+	(1) edge				node{a}(2)
+	(1) edge 				node{a}(3)
+	(2) edge [bend left] 	node{b}(3)
+	(3) edge 				node{a}(4)
+;
+\end{tikzpicture}
+\end{figure}
+
+În cadrul celui de al doilea pas, fiecare tranziţie $ \epsilon $ eliminată este înlocuită cu una sau mai multe tranziţii, aşa cum s-a arătat în cadrul secţiunii corespunzătoare. 
+
+\begin{enumerate}
+\item
+Înlocuirea pentru \textbf{tranziţia $ \epsilon $ de la $ q_0 $ la $ q_1 $}, se va face având în vedere cele două tranziţii care pleacă din $ q_1 $, una către $ q_3 $, iar cealaltă către $ q_2 $.
+
+\begin{itemize}
+\item
+$ f(q_0, \epsilon) = q_1  \; şi \; f(q_1, a) = q_3 $ $ \Leftrightarrow $ $ f(f(q_0, \epsilon),a) = q_3 $ 
+
+Eliminând tranziţia $ \epsilon $, putem scrie că:
+
+$ f'(q_0, a) = q_3 $
+\item
+$ f(q_0, \epsilon) = q_1  \; şi \; f(q_1, a) = q_2 $ $ \Leftrightarrow $ $ f(f(q_0, \epsilon),a) = q_2 $ 
+
+Eliminând tranziţia $ \epsilon $, putem scrie că:
+
+$ f'(q_0, a) = q_2 $
+\item
+Prin urmare, tranziţia $ f(q_0, \epsilon) = q_1 $ a automatului finit $ \epsilon $ va fi înlocuită în automatul finit nedeterminist cu tranziţiile $ f'(q_0, a) = q_2 $ şi $ f'(q_0, a) = q_3 $.
+\end{itemize}
+
+\item
+Înlocuirea pentru \textbf{tranziţia $ \epsilon $ de la $ q_2 $ la $ q_1 $}, se va face având în vedere aceleaşi două tranziţii care pleacă din $ q_1 $, care au fost considerate anterior.
+
+\begin{itemize}
+\item
+$ f(q_2, \epsilon) = q_1  \; şi \; f(q_1, a) = q_3 $ $ \Leftrightarrow $ $ f(f(q_2, \epsilon),a) = q_3 $ 
+
+Eliminând tranziţia $ \epsilon $, putem scrie că:
+
+$ f'(q_2, a) = q_3 $
+\item
+$ f(q_2, \epsilon) = q_1  \; şi \; f(q_1, a) = q_2 $ $ \Leftrightarrow $ $ f(f(q_2, \epsilon),a) = q_2 $ 
+
+Eliminând tranziţia $ \epsilon $, putem scrie că:
+
+$ f'(q_2, a) = q_2 $
+\item
+Prin urmare, tranziţia $ f(q_2, \epsilon) = q_1 $ a automatului finit $ \epsilon $ va fi înlocuită în automatul finit nedeterminist cu tranziţiile $ f'(q_2, a) = q_2 $ şi $ f'(q_2, a) = q_3 $.
+\end{itemize}
+
+\item
+În mod asemănător se va proceda şi pentru \textbf{tranziţia $ \epsilon $ de la $ q_3 $ la $ q_2 $}.
+
+\begin{itemize}
+\item
+$ f(q_3, \epsilon) = q_2  \; şi \; f(q_2, b) = q_3 $ $ \Leftrightarrow $ $ f(f(q_3, \epsilon),b) = q_3 $ 
+
+Eliminând tranziţia $ \epsilon $, putem scrie că:
+
+$ f'(q_3, b) = q_3 $
+\item
+$ f(q_3, \epsilon) = q_2  \; şi \; f(q_2, \epsilon) = q_1 \; şi \; f(q_1, a) = q_2$ $ \Leftrightarrow $ $ f(f(f(q_3, \epsilon), \epsilon),a) = q_2 $ 
+
+Eliminând cele două tranziţii $ \epsilon $, putem scrie că:
+
+$ f'(q_3, a) = q_2 $
+\item
+$ f(q_3, \epsilon) = q_2  \; şi \; f(q_2, \epsilon) = q_1 \; şi \; f(q_1, a) = q_3$ $ \Leftrightarrow $ $ f(f(f(q_3, \epsilon), \epsilon),a) = q_3 $ 
+
+Eliminând cele două tranziţii $ \epsilon $, putem scrie că:
+
+$ f'(q_3, a) = q_3 $
+\item
+Prin urmare, tranziţia $ f(q_3, \epsilon) = q_2 $ a automatului finit $ \epsilon $ va fi înlocuită în automatul finit nedeterminist cu tranziţiile $ f'(q_3, a) = q_2 $, $ f'(q_3, a) = q_3 $  şi $ f'(q_3, b) = q_3 $.
+\end{itemize}
+\item
+Având în vedere că din starea $ q_4 $ nu pleacă nicio tranziţie, \textbf{tranziţia $ \epsilon $ de la $ q_3 $ la $ q_4 $} va fi eliminată fără a fi înlocuită cu o altă tranziţie.
+\end{enumerate}
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=1.7cm,on grid,auto]
+	\node [initial, state] 		(0) 					{$q_0$};
+	\node[state] 				(1) [right of=0] 		{$q_1$};
+	\node [state] 				(2) [below of=1] 		{$q_2$};
+	\node [state] 				(3) [right of=1] 		{$q_3$};
+	\node [state, accepting]	(4) [right of=3] 		{$q_4$};
+
+	\path [->]
+		(0) edge [bend right]	node {a}(2)
+		(0) edge [bend left]	node {a}(3)
+		(1) edge				node{a}(2)
+		(1) edge 				node{a}(3)
+		(2) edge [loop below]	node {a}()
+		(2) edge [bend right] 	node [below] {a|b}(3)
+		(3) edge [loop above]	node {a|b}()
+		(3) edge				node {a}(4)
+		(3) edge [bend right]	node {a}(2)
+;
+\end{tikzpicture}
+\end{figure}
+
+Ultimul pas al construcţiei, constă în stabilirea stărilor automatului finit nedeterminist care devin stări finale. Acest lucru se face pe baza calculului închiderii fiecărei stări a automatului finit $ \epsilon $. Stările automatului finit $ \epsilon $ pentru care închiderea conţine o stare finală în cadrul acestui automat, vor deveni stări finale în automatul finit nedeterminist echivalent.
+
+$ CL(q_0) = \{ q_1 \}$
+
+$ CL(q_1) = \emptyset$
+
+$ CL(q_2) = \{ q_1 \}$
+
+$ CL(q_3) = \{ q_1, q_2, q_4 \}$
+
+$ CL(q_4) = \emptyset$
+
+Deoarece închiderea stării $ q_3 $ conţine o stare finală a automatului finit $ \epsilon $ (adică pe $ q_4 $), starea $ q_3 $ devine stare finală a automatului finit nedeterminist echivalent.
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=1.7cm,on grid,auto]
+	\node [initial, state] 		(0) 					{$q_0$};
+	\node[state] 				(1) [right of=0] 		{$q_1$};
+	\node [state] 				(2) [below of=1] 	{$q_2$};
+	\node [state, accepting]	(3) [right of=1] 		{$q_3$};
+	\node [state, accepting]	(4) [right of=3] 		{$q_4$};
+
+	\path [->]
+		(0) edge [bend right]	node {a}(2)
+		(0) edge [bend left]	node {a}(3)
+		(1) edge				node{a}(2)
+		(1) edge 				node{a}(3)		
+		(2) edge [loop below]	node {a}()
+		(2) edge [bend right] 	node [below] {a|b}(3)
+		(3) edge [loop above]	node {a|b}()
+		(3) edge				node {a}(4)
+		(3) edge [bend right]	node {a}(2)
+;
+\end{tikzpicture}
+\end{figure}
+
+
+
+\end{enumerate}
+
+\subsection{Exerciţii propuse}
+
+\begin{enumerate}
+\item
+Să se dezvolte într-un limbaj de programare oarecare o aplicaţie care să automatizeze procesul de construire a automatului finit determinist echivalent pentru un automat finit nedeterminist dat. Pentru automatul finit nedeterminist se vor da, prin intermediul unui fişier de intrare, alfabetul, mulţimea stărilor, starea iniţială, mulţimea stărilor finale şi tabelul de definiţie a funcţiei de tranziţie. Aplicaţia va desena graful de tranziţie al automatului finit determinist echivalent.
+
+\item
+Să se dezvolte într-un limbaj de programare oarecare o aplicaţie care să automatizeze procesul de construire a automatului finit nedeterminist echivalent pentru un automat finit $\epsilon$ dat. Pentru automatul finit $\epsilon$ se vor da, prin intermediul unui fişier de intrare, alfabetul, mulţimea stărilor, starea iniţială, mulţimea stărilor finale şi tabelul de definiţie a funcţiei de tranziţie. Aplicaţia va desena graful de tranziţie al automatului finit nedeterminist echivalent.
+
+\item
+Să se dezvolte într-un limbaj de programare oarecare o aplicaţie care să construiască gramatica formală echivalentă pentru un automat finit determinist dat. Pentru automatul finit determinist se vor furniza, prin intermediul unui fişier de intrare, alfabetul, mulţimea stărilor, starea iniţială, mulţimea stărilor finale şi tabelul de definiţie a funcţiei de tranziţie. Aplicaţia va furniza elementele de definiţie a gramaticii formale echivalente.
+
+Observaţii: 
+
+\begin{itemize}
+\item Alfabetul automatului finit determinist va constitui mulţimea terminalelor gramaticii.
+\item Mulţimea stărilor automatului va constitui mulţimea neterminalelor gramaticii.
+\item Starea iniţială va constitui simbolul de start.
+\item Regulile de producţie se vor construi pe baza tranziţiilor automatului.
+\end{itemize}
+
+\item
+Să se deducă automatul finit determinist echivalent pentru următorul automat finit nedeterminist:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[->,>=stealth',shorten >=1pt,auto,node distance=4cm,
+                    semithick]
+\node[initial,state] (0)                    {$q_0$};
+  \node[state,accepting]         (1) [right of=0] {$q_1$};
+  \node[state]         (2) [below of=0] {$q_2$};
+  \path (0) edge      [loop above]        node {0} (0)
+            edge              node {1} (2)
+	edge  node {0} (1)
+        (1)   edge   [loop above]           node  {0} (1)
+        (2) edge              node {0} (1)
+            edge   [loop below] node {1} (2);
+\end{tikzpicture}
+\end{figure}
+
+\item
+Să se deducă automatul finit determinist echivalent pentru următorul automat finit nedeterminist:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto] 
+\node [state, initial] (0) {$q_0$};
+\node [state] [right of=0] (1) {$q_1$};
+\node [state, accepting] [below right of=0] (2) {$q_2$};
+
+\path[->]
+	(0)edge [ loop above] node{0}()
+	(0)edge		node{1}(1)
+	(0)edge [bend right] node{0}(2)
+	(1)edge [loop above] node{1}()
+	(1)edge [bend right]	node{0}(2)
+	(2)edge [loop below] node{0}()
+	(2)edge [bend right] node{1}(0)
+	(2) edge [bend left] node{0}(0)
+	(2)edge [bend right] node{1}(1)
+	;	
+\end{tikzpicture}
+\end{figure}
+
+\item
+Să se deducă automatul finit nedeterminist echivalent pentru următorul automat finit $ \epsilon $:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=2cm,on grid,auto]
+  \node[state,initial]	(0)              		{$A$};
+  \node[state]    			(1)   [above right  of=0] 	{$B$};
+  \node[state]              (2)  [right of=1] 	{$C$};   
+   \node[state,accepting]    			(3)   [right  of=2] 	{$D$};
+    \node[state]    			(4)   [below right of=0] 	{$E$};
+    \node[state]    			(5)   [right of=4] 	{$F$};
+
+ \path[->]
+     (0)	edge 	node	{1} (1)
+        
+     (1) edge node	{1} (2)
+     (1) edge [bend left] node [above] {$\varepsilon$} (3)
+     (2) edge node {1} (3)
+     (0) edge node {0} (4)
+     
+     (4) edge  node {$\varepsilon$} (1)
+     (4) edge node {$\varepsilon$} (2)
+     (4) edge node {0} (5)
+     (5) edge node {0} (3)
+;
+\end{tikzpicture}
+\end{figure}
+
+\item
+Să se deducă automatul finit nedeterminist echivalent pentru următorul automat finit $ \epsilon $:
+
+\begin{figure}[H]
+\centering
+\begin{tikzpicture}[shorten >=1pt,node distance=3cm,on grid,auto]
+\node[state, initial] (0) {$q_0$};
+\node[state] [right of=0] (1) {$q_1$};
+\node[state, accepting] [below right of=1] (2) {$q_2$};
+
+\path [->]
+	(0)edge [loop above] node{0}()
+	(0)edge 		    node{$\epsilon$} (1)
+	(1)edge [loop above] node{1}()
+	(1)edge		node{0}(2)
+	(2)edge [loop above] node{0}()
+	(2)edge [bend left] node{$\epsilon$}(0)
+;	
+\end{tikzpicture}
+\end{figure}
+
+
+
+\end{enumerate}

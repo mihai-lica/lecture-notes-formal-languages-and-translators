@@ -1,0 +1,46 @@
+\chapter{Introducere în teoria limbajelor formale}
+\label{ch:introducere}
+
+\section{Limbaje formale}
+
+Limbajul este o modalitate sistematică de comunicare care utilizează sunete sau simboluri convenţionale. Referindu-ne la limbajele de programare, simbolurile convenţionale sunt şiruri de caractere.
+
+Pentru a defini un şir de caractere trebuie să pornim de la un alfabet.
+
+\begin{definitie}
+Un \textbf{alfabet} este o mulţime finită de simboluri.
+\end{definitie}
+
+Exemple:
+\begin{itemize}
+\item
+$\Sigma_{1} = \{$a, ă, â, b, c, d, $\dots$, z$\}$ este mulţimea literelor din alfabetul limbii române.
+\item
+$\Sigma_{2} = \{$0, 1, $\dots$, 9$\}$ este mulţimea cifrelor în baza 10.
+\item
+$\Sigma_{3} = \{$a, b, $\dots$, z, \# $\}$ este mulţimea literelor din alfabetul latin, plus simbolul special $\#$.
+\end{itemize}
+
+\begin{definitie}
+O succesiune finită de simboluri din alfabetul $\Sigma$ se numeşte \textbf{şir de simboluri} peste alfabetul dat.
+\end{definitie}
+
+Exemple:
+\begin{itemize}
+\item
+\textit{abfbz} este şir de caractere peste $\Sigma_{1} = \{$a, b, c, d, $\dots$, z$\}$,
+\item
+\textit{9021} este şir de caractere peste $\Sigma_{2} = \{$0, 1, $\dots$, 9$\}$,
+\item
+\textit{ab\#bc} este şir de caractere peste $\Sigma_{3} = \{$a, b, $\dots$, z, \#$\}$.
+\end{itemize}
+
+\begin{definitie}
+Un \textbf{limbaj} este o mulţime de şiruri (finită sau infinită) de simboluri peste acelaşi alfabet.
+\end{definitie}
+
+Dacă limbajul este finit atunci el poate să fie definit prin \textbf{enumerare}. Cum poate fi însă definit un limbaj infinit? Există două mecanisme distincte de definire a limbajelor: prin \textbf{generare} sau prin \textbf{recunoaştere}.
+
+În primul caz este vorba de un "dispozitiv" care ştie să genereze toate propoziţiile din limbaj (şi numai pe acestea), astfel încât alegând o propoziţie din limbaj, dispozitivul va ajunge sa genereze propoziţia respectivă într-un interval finit de timp. Din această categorie fac parte gramaticile formale.
+
+În al doilea caz este vorba de un "dispozitiv" care ştie să recunoască (să accepte ca fiind corecte) propoziţiile limbajului dat (şi numai pe acestea). Din această categorie fac parte expresiile regulate şi automatele finite.
